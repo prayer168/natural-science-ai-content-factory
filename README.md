@@ -245,6 +245,9 @@ natural-science-ai-content-factory/
 ├── README.md
 ├── SKILL.md
 ├── VERSION
+├── CHANGELOG.md
+├── docs/
+│   └── conversation-history.md
 ├── references/
 │   ├── canonical-schema.md
 │   ├── platform-mapping.md
@@ -258,11 +261,6 @@ natural-science-ai-content-factory/
 │       ├── kahoot-ready.csv
 │       ├── wayground-ready.csv
 │       └── teacher-notes.md
-├── references/
-│   ├── canonical-schema.md
-│   ├── platform-mapping.md
-│   ├── prompt-library.md
-│   └── qa-checklist.md
 └── scripts/
     └── build_platform_ready_bundle.py
 ```
@@ -276,6 +274,10 @@ python scripts/build_platform_ready_bundle.py --json examples/items-example.json
 ```
 
 這些 CSV 並非平台官方範本。若要直接匯入，請先取得 Kahoot 或 Wayground 當期官方範本，再依照該範本映射欄位。腳本輸出的正確答案索引沿用 Canonical 的 1 起算編號。
+
+## 專案紀錄
+
+需求形成與版本演進的對話紀錄見 [docs/conversation-history.md](docs/conversation-history.md)。已完成版本的變更以 [CHANGELOG.md](CHANGELOG.md) 為準。
 
 ## 10. 版本
 
