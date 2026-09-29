@@ -2,7 +2,7 @@
 
 > 自然科 AI 教材工廠版｜Kahoot × Wayground 雙平台批次教材生成系統
 
-![Version](https://img.shields.io/badge/version-v1.3.0-blue)
+![Version](https://img.shields.io/badge/version-v1.3.1-blue)
 ![Language](https://img.shields.io/badge/language-繁體中文-green)
 ![Curriculum](https://img.shields.io/badge/curriculum-108課綱-orange)
 ![Platforms](https://img.shields.io/badge/platforms-Kahoot%20%2B%20Wayground-purple)
@@ -321,9 +321,11 @@ The builder runs the automatic validation gate and exits with a nonzero status i
 
 需求形成與版本演進的對話紀錄見 [docs/conversation-history.md](docs/conversation-history.md)。已完成版本的變更以 [CHANGELOG.md](CHANGELOG.md) 為準。
 
+技能建置過程的影片旁白與分鏡稿見 [docs/video-script-build-process.md](docs/video-script-build-process.md)。
+
 ## 10. 版本
 
-目前版本：**v1.3.0**
+目前版本：**v1.3.1**
 
 版本規則採 [Semantic Versioning](https://semver.org/)：
 
@@ -331,11 +333,11 @@ The builder runs the automatic validation gate and exits with a nonzero status i
 - `MINOR`：新增向下相容功能
 - `PATCH`：錯誤修正、提示詞調整、文件改善
 
-Git 發行版本以 `VERSION`、README 與 `CHANGELOG.md` 的 `1.3.0` 相互對應；變更紀錄見 [CHANGELOG.md](CHANGELOG.md)。此版本的 Tag：
+Git 發行版本以 `VERSION`、README 與 `CHANGELOG.md` 的 `1.3.1` 相互對應；變更紀錄見 [CHANGELOG.md](CHANGELOG.md)。此版本的 Tag：
 
 ```bash
-git tag -a v1.3.0 -m "Natural Science AI Content Factory v1.3.0"
-git push origin v1.3.0
+git tag -a v1.3.1 -m "Natural Science AI Content Factory v1.3.1"
+git push origin v1.3.1
 ```
 
 ## 11. 專案定位

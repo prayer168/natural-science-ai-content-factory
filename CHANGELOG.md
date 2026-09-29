@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.3.1] - 2026-09-30
+
+### Added
+- Camera-ready Traditional Chinese video script documenting the skill's real design, validation, testing, and release process.
+
 ## [1.3.0] - 2026-09-30
 
 ### Added
