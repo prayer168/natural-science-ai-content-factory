@@ -1,0 +1,2 @@
+﻿id,target_type,fallback_type,question,options_json,correct_answer_json,teacher_note,manual_step
+G4-MOON-001,multiple_choice,multiple_choice,平常看到月亮有圓缺變化，最主要的原因是什麼？,"[""地球的影子每天遮住月亮"", ""月球繞地球運行時，我們看到的受光部分不同"", ""月亮每天自己改變形狀"", ""雲把月亮的一部分固定遮住""]",[2],,

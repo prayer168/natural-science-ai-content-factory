@@ -1,0 +1,20 @@
+batch_name: 六年級探索天氣變化
+grade: 6
+settings:
+  questions_per_activity: 10
+  language: zh-TW
+  phases:
+    diagnosis: 0.25
+    inquiry: 0.35
+    ai_evidence: 0.15
+    differentiation: 0.25
+outputs:
+  canonical_json: true
+  kahoot: true
+  wayground: true
+  teacher_markdown: true
+activities:
+  - 氣溫觀測
+  - 雲量觀測
+  - 風向觀測
+  - 降雨觀測

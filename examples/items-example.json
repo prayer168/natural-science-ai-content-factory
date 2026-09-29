@@ -1,0 +1,22 @@
+[
+  {
+    "id": "G4-MOON-001",
+    "grade": 4,
+    "unit": "月亮的位置與月相",
+    "activity": "月相迷思診斷",
+    "learning_objective": "能區分月相成因與月食現象",
+    "phase": "diagnosis",
+    "cognitive_level": "understand",
+    "difficulty": "medium",
+    "canonical_type": "single_choice",
+    "stem": "平常看到月亮有圓缺變化，最主要的原因是什麼？",
+    "options": ["地球的影子每天遮住月亮", "月球繞地球運行時，我們看到的受光部分不同", "月亮每天自己改變形狀", "雲把月亮的一部分固定遮住"],
+    "correct_answer": [2],
+    "explanation": "月相主要來自月球公轉時，地球上觀察者看到的月球受光面比例不同。",
+    "misconception": "把日常月相誤認為地球影子造成。",
+    "remediation": "用球與燈模擬太陽、月球與觀察者位置。",
+    "verification_status": "needs_review",
+    "kahoot_adapter": {"target_type": "single_choice", "time_limit": 20},
+    "wayground_adapter": {"target_type": "multiple_choice", "fallback_type": "multiple_choice"}
+  }
+]
