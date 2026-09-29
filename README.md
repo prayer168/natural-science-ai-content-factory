@@ -2,16 +2,56 @@
 
 > 自然科 AI 教材工廠版｜Kahoot × Wayground 雙平台批次教材生成系統
 
-![Version](https://img.shields.io/badge/version-v1.2.0-blue)
+![Version](https://img.shields.io/badge/version-v1.3.0-blue)
 ![Language](https://img.shields.io/badge/language-繁體中文-green)
 ![Curriculum](https://img.shields.io/badge/curriculum-108課綱-orange)
 ![Platforms](https://img.shields.io/badge/platforms-Kahoot%20%2B%20Wayground-purple)
 
-**Natural Science AI Content Factory** 是一套為臺灣國小自然科教師設計的 AI 教材批次生產 Skill。它延續 `natural-science-kahoot-assessment` 與 Wayground 批次教材生成流程，將「單份題庫製作」升級為「教材來源盤點 → 單元辨識 → 評量藍圖 → Canonical 母題庫 → Kahoot / Wayground 雙平台輸出 → 教師解析與品質驗證」的完整教材工廠。
+**Natural Science AI Content Factory** 是一套為臺灣國小自然科教師設計的 AI 教材批次生產 Skill。完整流程分成三個可分開呼叫的階段：教材先生成到 Google Drive 的專案資料夾；再由程式 hook 和逐題專業查證把關；最後在明確要求下建立 Kahoot 與 Wayground 資源，並列出實際成功清單。
 
 核心理念只有一句話：
 
-> **命題一次，多平台輸出；先盤點、後生產；先驗證、再交付。**
+> **本機生成 → 強制驗證 → 明確授權後上傳並回報。**
+
+## 三階段操作
+
+### 1. 在本機生成教材
+
+專案預設放在：
+
+```text
+C:\Users\user\我的雲端硬碟\google drive\000000000backup\0000000000數位教材\natural-science-ai-content-factory
+```
+
+每批放在 `outputs/YYYY-MM-DD_<批次名稱>/`，不覆蓋舊批次。題庫以 Canonical JSON 作唯一來源，同批產生 Kahoot、Wayground 檢閱檔及教師解析。這些教材留在本機，`outputs/` 已加入 `.gitignore`，不會混入技能原始碼的 Git 版本。
+
+### 2. 呼叫驗證 hook
+
+生成後執行：
+
+```powershell
+python scripts/validate_content_bundle.py --bundle "<批次資料夾>"
+```
+
+Hook 檢查欄位、答案索引、重複題目、雙平台 CSV 與母題庫同步、查證來源欄位及檔案完整性，並產生 `自動檢查報告.md`。技能接著必須開啟來源逐題確認科學主張並審查評量品質，將結果整合到 `驗證報告.md`；兩層都通過才標記 `PASS`。有任何阻擋題目便不得進入上傳階段。
+
+### 3. 上傳平台並列出完成清單
+
+使用者明確要求上傳後，才操作已登入的 Kahoot 和 Wayground。先查當期官方說明和平台範本；每筆確認儲存成功且可重新開啟後，才記錄穩定連結。批次資料夾內的 `上傳完成清單.md` 區分成功、失敗與待處理，不會把單純按過上傳按鈕算成完成。詳細程序見 [`references/platform-upload.md`](references/platform-upload.md)。
+
+生成或驗證的指令不會自動授權第三階段；可用同一句明確說「上傳到 Kahoot 和 Wayground」來授權新建本批次資源，不會編輯既有測驗。
+
+## 安裝為 Codex Skill
+
+本機技能已安裝在 `%USERPROFILE%\.codex\skills\natural-science-ai-content-factory`。此 repo 為版本控制來源；更新後可用 PowerShell 同步：
+
+```powershell
+$target = Join-Path $env:USERPROFILE ".codex\skills\natural-science-ai-content-factory"
+New-Item -ItemType Directory -Path $target -Force | Out-Null
+Copy-Item .\SKILL.md $target -Force
+Copy-Item .\references $target -Recurse -Force
+Copy-Item .\scripts $target -Recurse -Force
+```
 
 ## 1. 適合誰使用？
 
@@ -28,7 +68,7 @@
 
 相較 V1.1 的「Kahoot × Wayground 雙平台題庫引擎」，V1.2.0 進一步加入 **AI 教材工廠模式**。
 
-> 壓縮檔隨附的 `SKILL.md` 已與本版本說明同步至 1.2.0。Skill 會先盤點教材並建立 manifest，再逐活動產生 Canonical 題庫、完成 QA 與科學查證，最後才分流平台格式。
+> 1.2.0 引入的教材工廠能力延續至目前版本：Skill 會先盤點教材並建立 manifest，再逐活動產生 Canonical 題庫、完成 QA 與科學查證，最後才分流平台格式。
 
 ### 2.1 先盤點、後生產
 
@@ -148,7 +188,7 @@ Wayground 可優先使用多元互動題型；若 Kahoot 無法等價呈現，�
 
 ## 5. 建議工作模式
 
-### 模式 A：單元快速生成
+### 模式 A：單元快速生成（本機）
 
 適合單一活動或一堂課。
 
@@ -156,7 +196,7 @@ Wayground 可優先使用多元互動題型；若 Kahoot 無法等價呈現，�
 使用 natural-science-ai-content-factory，
 將六年級〈探索天氣變化〉做成 12 題，
 包含迷思診斷、資料判讀與生活應用，
-輸出 Kahoot 與 Wayground 版本。
+生成到本機並執行驗證，不要上傳。
 ```
 
 ### 模式 B：整冊教材工廠
@@ -170,7 +210,7 @@ Wayground 可優先使用多元互動題型；若 Kahoot 無法等價呈現，�
 先不要生成正式題目。
 完成盤點後，每個活動產生 10 題，
 採診斷→探究→AI證據→差異化架構，
-最後輸出 Kahoot、Wayground、教師解析與批次驗證摘要。
+生成到本機後執行驗證；通過後再把這批教材上傳到 Kahoot 和 Wayground，最後列出每筆資源連結。
 ```
 
 ### 模式 C：既有 Kahoot 升級 Wayground
@@ -273,6 +313,8 @@ natural-science-ai-content-factory/
 python scripts/build_platform_ready_bundle.py --json examples/items-example.json --outdir dist/example-bundle
 ```
 
+The builder runs the automatic validation gate and exits with a nonzero status if the files are inconsistent. A green automatic check still requires the skill's source and assessment review before upload. Validate the checker with `python -m unittest discover -s tests`.
+
 這些 CSV 並非平台官方範本。若要直接匯入，請先取得 Kahoot 或 Wayground 當期官方範本，再依照該範本映射欄位。腳本輸出的正確答案索引沿用 Canonical 的 1 起算編號。
 
 ## 專案紀錄
@@ -281,7 +323,7 @@ python scripts/build_platform_ready_bundle.py --json examples/items-example.json
 
 ## 10. 版本
 
-目前版本：**v1.2.0**
+目前版本：**v1.3.0**
 
 版本規則採 [Semantic Versioning](https://semver.org/)：
 
@@ -289,11 +331,11 @@ python scripts/build_platform_ready_bundle.py --json examples/items-example.json
 - `MINOR`：新增向下相容功能
 - `PATCH`：錯誤修正、提示詞調整、文件改善
 
-Git 發行版本以 `VERSION`、README 與 `SKILL.md` metadata 的 `1.2.0` 相互對應；變更紀錄見 [CHANGELOG.md](CHANGELOG.md)。建議 Git Tag：
+Git 發行版本以 `VERSION`、README 與 `CHANGELOG.md` 的 `1.3.0` 相互對應；變更紀錄見 [CHANGELOG.md](CHANGELOG.md)。此版本的 Tag：
 
 ```bash
-git tag -a v1.2.0 -m "Natural Science AI Content Factory v1.2.0"
-git push origin v1.2.0
+git tag -a v1.3.0 -m "Natural Science AI Content Factory v1.3.0"
+git push origin v1.3.0
 ```
 
 ## 11. 專案定位

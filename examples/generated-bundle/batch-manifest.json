@@ -1,0 +1,13 @@
+{
+  "batch_name": "generated-bundle",
+  "question_count": 1,
+  "activities": [
+    "4年級／月亮的位置與月相／月相迷思診斷"
+  ],
+  "outputs": [
+    "canonical.json",
+    "kahoot-ready.csv",
+    "wayground-ready.csv",
+    "teacher-notes.md"
+  ]
+}

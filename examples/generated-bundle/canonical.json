@@ -5,6 +5,7 @@
     "unit": "月亮的位置與月相",
     "activity": "月相迷思診斷",
     "learning_objective": "能區分月相成因與月食現象",
+    "curriculum_alignment": "課綱對應需依教師提供的課程資料另行核對",
     "phase": "diagnosis",
     "cognitive_level": "understand",
     "difficulty": "medium",
@@ -22,14 +23,25 @@
     "explanation": "月相主要來自月球公轉時，地球上觀察者看到的月球受光面比例不同。",
     "misconception": "把日常月相誤認為地球影子造成。",
     "remediation": "用球與燈模擬太陽、月球與觀察者位置。",
-    "verification_status": "needs_review",
+    "evidence_required": "判斷月球受光面與地球影子是否能解釋月相。",
+    "source_note": "NASA Science：Top Moon Questions，Are Moon phases caused by shadows from Earth?",
+    "sources": [
+      {
+        "title": "Top Moon Questions - NASA Science",
+        "url": "https://science.nasa.gov/moon/top-moon-questions/",
+        "supports": "月相來自地球上觀察者看到的月球受光面比例；一般月相不是地球影子造成。"
+      }
+    ],
+    "verification_status": "verified",
     "kahoot_adapter": {
       "target_type": "single_choice",
+      "support_status": "supported",
       "time_limit": 20
     },
     "wayground_adapter": {
       "target_type": "multiple_choice",
-      "fallback_type": "multiple_choice"
+      "fallback_type": "multiple_choice",
+      "support_status": "supported"
     }
   }
 ]

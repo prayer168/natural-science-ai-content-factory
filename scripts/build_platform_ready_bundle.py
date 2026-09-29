@@ -4,7 +4,7 @@
 This script intentionally does NOT claim to create the latest official import XLSX.
 Official templates change; use the current template adapter at export time.
 """
-import argparse, csv, json
+import argparse, csv, json, subprocess, sys
 from pathlib import Path
 
 
@@ -43,7 +43,18 @@ def main():
     for q in items:
         md += [f"## {q.get('id')}\n", f"**題目：** {q.get('stem','')}\n", f"**解析：** {q.get('explanation','')}\n", f"**主要迷思：** {q.get('misconception','')}\n", f"**補救：** {q.get('remediation','')}\n"]
     (out / "teacher-notes.md").write_text("\n".join(md), encoding="utf-8")
-    print(f"Created bundle in {out}")
+    manifest = {
+        "batch_name": out.name,
+        "question_count": len(items),
+        "activities": sorted({f"{q.get('grade')}年級／{q.get('unit')}／{q.get('activity')}" for q in items}),
+        "outputs": ["canonical.json", "kahoot-ready.csv", "wayground-ready.csv", "teacher-notes.md"],
+    }
+    (out / "batch-manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    validator = Path(__file__).with_name("validate_content_bundle.py")
+    result = subprocess.run([sys.executable, str(validator), "--bundle", str(out)], check=False)
+    status = "AUTOMATED PASS — PROFESSIONAL REVIEW REQUIRED" if result.returncode == 0 else "BLOCKED"
+    print(f"Created review bundle in {out}; status={status}")
+    return result.returncode
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

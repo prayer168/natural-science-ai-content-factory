@@ -8,6 +8,8 @@
 - [ ] 無雙重否定與模糊量詞
 - [ ] 圖表/實驗題資料完整
 - [ ] 科學敘述已查證或標記待查
+- [ ] `verified` 題目至少有一個已開啟且支持列明主張的來源
+- [ ] 沒有 `draft`、`needs_review` 或 `blocked` 題目被放入待上傳批次
 
 ## 雙平台一致性
 - [ ] Kahoot 與 Wayground 來自同一 canonical id
@@ -15,6 +17,7 @@
 - [ ] 平台轉譯後未改變學習目標
 - [ ] 互動題降級時有 fallback
 - [ ] manual_required 已列出
+- [ ] 程式驗證 hook 已執行，`驗證報告.md` 為 PASS
 
 ## 匯入
 - [ ] 已取得當次官方 template 或明確標記非官方匯入檔
