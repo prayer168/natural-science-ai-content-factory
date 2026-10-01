@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministically validate a local Canonical/Kahoot/Wayground review bundle."""
+"""Deterministically validate a local Canonical/Kahoot/Wayground/Wordwall review bundle."""
 import argparse
 import csv
 import json
@@ -43,10 +43,24 @@ def _int_list(value):
     return isinstance(value, list) and all(type(item) is int for item in value)
 
 
+def _platform_file(bundle, platform, manifest, legacy_name):
+    candidates = [
+        bundle / path for path in (manifest.get("outputs") or [])
+        if isinstance(path, str) and path.startswith(f"{platform}/") and path.lower().endswith(".csv")
+    ]
+    if candidates and candidates[0].is_file():
+        return candidates[0]
+    legacy = bundle / legacy_name
+    if legacy.is_file():
+        return legacy
+    nested = sorted((bundle / platform).glob("*.csv")) if (bundle / platform).is_dir() else []
+    return nested[0] if len(nested) == 1 else bundle / platform / legacy_name
+
+
 def validate(bundle):
     bundle = Path(bundle)
     errors, warnings = [], []
-    expected = ("canonical.json", "kahoot-ready.csv", "wayground-ready.csv", "teacher-notes.md", "batch-manifest.json")
+    expected = ("canonical.json", "teacher-notes.md", "batch-manifest.json")
     for filename in expected:
         if not (bundle / filename).is_file():
             errors.append(f"缺少必要檔案：{filename}")
@@ -57,6 +71,7 @@ def validate(bundle):
             errors.append("canonical.json 必須是非空題目陣列")
         questions = []
     manifest_path = bundle / "batch-manifest.json"
+    manifest = {}
     if manifest_path.is_file():
         manifest = _load_json(manifest_path, errors)
         if not isinstance(manifest, dict):
@@ -152,7 +167,12 @@ def validate(bundle):
                                        (q.get("wayground_adapter") or {}).get("target_type"),
                                        (q.get("wayground_adapter") or {}).get("fallback_type"))
 
-    kahoot_path, wayground_path = bundle / "kahoot-ready.csv", bundle / "wayground-ready.csv"
+    kahoot_path = _platform_file(bundle, "Kahoot", manifest, "kahoot-ready.csv")
+    wayground_path = _platform_file(bundle, "Wayground", manifest, "wayground-ready.csv")
+    if not kahoot_path.is_file():
+        errors.append(f"缺少必要檔案：{kahoot_path.relative_to(bundle) if kahoot_path.is_relative_to(bundle) else kahoot_path.name}")
+    if not wayground_path.is_file():
+        errors.append(f"缺少必要檔案：{wayground_path.relative_to(bundle) if wayground_path.is_relative_to(bundle) else wayground_path.name}")
     kahoot_rows = _read_csv(kahoot_path, errors) if kahoot_path.is_file() else None
     wayground_rows = _read_csv(wayground_path, errors) if wayground_path.is_file() else None
 
@@ -197,6 +217,32 @@ def validate(bundle):
 
     check_rows(kahoot_rows, "Kahoot")
     check_rows(wayground_rows, "Wayground")
+
+    declared_wordwall = [
+        bundle / path for path in (manifest.get("outputs") or [])
+        if isinstance(path, str) and path.startswith("Wordwall/") and path.lower().endswith(".md")
+    ]
+    wordwall_path = next((path for path in declared_wordwall if path.is_file()), None)
+    if declared_wordwall and wordwall_path is None:
+        errors.append("manifest 宣告的 Wordwall 活動稿不存在")
+    elif wordwall_path is not None:
+        try:
+            wordwall_text = wordwall_path.read_text(encoding="utf-8-sig")
+        except OSError as exc:
+            errors.append(f"無法讀取 Wordwall 活動稿：{exc}")
+        else:
+            if "不是 Wordwall 官方匯入檔" not in wordwall_text:
+                errors.append("Wordwall 活動稿缺少人工設計稿／非官方匯入檔聲明")
+            for qid in expected_ids:
+                if qid not in wordwall_text:
+                    errors.append(f"Wordwall 活動稿缺少 Canonical ID：{qid}")
+            for question in questions:
+                qid = question.get("id")
+                for source in question.get("sources") or []:
+                    url = source.get("url") if isinstance(source, dict) else None
+                    if url and url not in wordwall_text:
+                        errors.append(f"Wordwall 活動稿 {qid} 缺少 Canonical 來源：{url}")
+
     if (bundle / "teacher-notes.md").is_file() and not (bundle / "teacher-notes.md").read_text(encoding="utf-8-sig").strip():
         errors.append("teacher-notes.md 不可為空")
 

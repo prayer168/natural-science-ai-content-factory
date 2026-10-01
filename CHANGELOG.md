@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.4.0] - 2026-10-01
+
+### Added
+- Traceable Markdown build reports with curriculum-code mapping, per-question sources, verification/revision status, storage paths, file hashes, and upload state.
+- A deterministic report generator and guidance to keep generated teaching materials under the Git-ignored outputs/ directory.
+- Wordwall manual activity-design plans generated from the same Canonical question bank and source/QA gate as Kahoot and Wayground.
+- Wordwall activity suggestions for matching, group sorting, quizzes, random wheels, and other learning-goal-aligned formats, with item/answer keys, Canonical IDs, sources, and teacher setup steps.
+- Separate Kahoot, Wayground, and Wordwall output folders, plus a deterministic Wordwall plan builder and validator coverage.
+
 ## [1.3.1] - 2026-09-30
 
 ### Added
@@ -16,6 +25,8 @@
 ### Changed
 - A platform-ready batch must pass both deterministic file/consistency checks and question-by-question source and assessment review before upload.
 - Updated Canonical schema requirements to retain verifiable source claims and adapter support status.
+- Wordwall remains a manual design deliverable unless current official feature and import specifications are verified; no direct-import or publication claim is made.
+- All three platform outputs retain the same Canonical IDs, answers, learning objectives, and per-question evidence.
 
 ## [1.2.0] - 2026-09-30
 

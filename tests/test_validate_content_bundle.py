@@ -34,7 +34,7 @@ class BundleValidationTests(unittest.TestCase):
         self.assertNotIn("# 驗證報告：PASS", report)
 
     def test_platform_answer_drift_blocks_bundle(self):
-        path = self.bundle / "wayground-ready.csv"
+        path = self.bundle / "Wayground" / "wayground-ready.csv"
         with path.open(encoding="utf-8-sig", newline="") as stream:
             rows = list(csv.DictReader(stream))
         rows[0]["correct_answer_json"] = "[4]"

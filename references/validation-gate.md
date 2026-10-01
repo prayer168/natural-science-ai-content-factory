@@ -8,14 +8,14 @@
 python scripts/validate_content_bundle.py --bundle "<批次資料夾>"
 ```
 
-命令檢查 `canonical.json`、`kahoot-ready.csv`、`wayground-ready.csv`、`teacher-notes.md`，並將程式檢查結果寫入 `自動檢查報告.md`。若有阻擋問題，程序以非零狀態結束；先修正資料，再重新執行。程式檢查通過只表示自動檢查通過，並不代表教材已可上傳。
+命令檢查 `canonical.json`、Kahoot／Wayground 檢閱素材、Wordwall 人工活動稿及 `teacher-notes.md`，並將程式檢查結果寫入 `自動檢查報告.md`。若有阻擋問題，程序以非零狀態結束；先修正資料，再重新執行。程式檢查通過只表示自動檢查通過，並不代表教材已可上傳。
 
 ## 自動阻擋項目
 
 - JSON 無效、題目欄位缺漏、ID 重複、題型／階段／狀態無效。
 - 題幹或選項空白、答案索引超出範圍／重複、單選題正解數不是一個。
 - 題目不是 `verified`，或查證來源未列出標題、網址與支持的主張。
-- Kahoot／Wayground adapter 缺漏；Wayground 缺少 fallback；兩份平台檔缺題、重複或題目／正解／題型與 Canonical 不一致。
+- Kahoot／Wayground adapter 缺漏；Wayground 缺少 fallback；平台檔缺題、重複或題目／正解／題型與 Canonical 不一致；Wordwall 稿缺少題目 ID 或來源。
 - 預期輸出檔不存在或 CSV 欄位無法讀取。
 
 ## 必須由技能完成的逐題審查

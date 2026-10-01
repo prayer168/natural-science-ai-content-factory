@@ -2,7 +2,7 @@
 
 > 專案名稱：Natural Science AI Content Factory  
 > 中文名稱：自然科 AI 教材工廠版  
-> 目前版本：v1.2.0  
+> 本文件起始於：v1.2.0（歷史內容；目前版本請見 repository `VERSION`）
 > 用途：保留從需求形成、功能設計、Skill 迭代、GitHub 規劃到 Wiki 文件化的完整開發脈絡，作為後續版本迭代、決策追蹤與簽核依據。
 
 ---
@@ -558,7 +558,7 @@ Wiki 用來提供按任務查找的操作說明；repository 內的 `SKILL.md`�
 
 ## 13. 目前 repository 狀態
 
-這份對話紀錄是在 v1.2.0 repository 建立後補入。先前「GitHub repository 尚未完成建立」是當時的規劃紀錄，現況已更新如下：
+這份對話紀錄最初在 v1.2.0 repository 建立後補入。先前「GitHub repository 尚未完成建立」是當時的規劃紀錄；本節為當時狀態快照，目前發行版另見後續發行紀錄與 `VERSION`：
 
 - Repository：<https://github.com/prayer168/natural-science-ai-content-factory>
 - 預設分支：`main`
@@ -570,3 +570,23 @@ Wiki 用來提供按任務查找的操作說明；repository 內的 `SKILL.md`�
 
 此紀錄於 2026-09-30 依使用者提供的貼上文字整理；原始貼文尾端不完整，缺漏處已依本對話既有決策補寫。
 
+
+
+## 14. 教材建置報告與可追溯性
+
+2026-09-30，使用者要求在教材工廠技能新增「教材建置報告」功能，報告以 Markdown 呈現，追蹤教材名稱、檔名、建置日期、題型、課綱學習內容與學習表現代碼、儲存位置、難易度，並補充來源、驗證、修訂及平台上傳狀態等履歷資料。
+
+- 在 `references/material-build-report.md` 定義必填欄位與證據規則；在 `scripts/build_material_report.py` 加入批次報告產生器。
+- 更新 `SKILL.md`、Canonical schema、README 與 CHANGELOG，使報告於生成、驗證、修訂及上傳後更新。缺資料標示待補／待核對；課綱代碼需引官方課綱來源，難度是本批標籤，平台檢閱 CSV 不等於官方匯入範本。
+- 為 2026-09-30 四年級上學期六單元批次產生範例報告，內容仍位於 Git 忽略的 `outputs/`。六單元各 10 題，已重跑自動 hook 並比對原逐題複核報告，兩類狀態皆 PASS；Kahoot 和 Wayground 均尚未上傳。
+- 報告逐題列出題型、難度、來源與課綱代碼，並含檔案絕對路徑、大小及 SHA-256、課程地圖及官方課綱來源、對照限制與修訂紀錄。
+
+## 15. Wordwall 活動稿與 v1.4.0 發行
+
+2026-10-01，使用者要求先統整並發布技能更新，再開始另一批教材盤點與生產；本次明確要求尚未完成技能發布前不要生成教材。新增平台為 Wordwall，不納入 Padlet。
+
+- Kahoot、Wayground、Wordwall 共用同一份 Canonical 母題庫、逐題來源、科學查證及 QA 閘門；修訂必須回到 Canonical，再同步重建平台素材。
+- Wordwall 根據學習目標提供配對、分組分類、測驗、隨機轉盤或其他合宜形式的人工活動設計稿，列項目、答案／配對、Canonical ID、來源及教師建置步驟。未核實當期官方功能及匯入格式時，不得宣稱可直接匯入或已發布。
+- Kahoot、Wayground、Wordwall 產物分別存放於同批次的獨立資料夾；沿用素材編號、學年度、年級、學期、版本、單元名稱及日期的檔名慣例。
+- 發布前確認 repository 已有 v1.3.0 與 v1.3.1 tag，因此不重用舊 tag，將 Wordwall 與本次未發布的教材建置報告功能整合到 v1.4.0。
+- 本次先修訂技能、參考文件、腳本及測試，執行驗證後再 commit、tag、push。另一對話提及的教材來源須於發布後另行盤點；本節不表示 93 單元教材已生成。

@@ -1,11 +1,13 @@
 ---
 name: natural-science-ai-content-factory
-description: "將臺灣國小自然科教材在本機製作成 Kahoot 與 Wayground 素材，經過必要的品質與科學查證後，依使用者指示上傳並回報成功清單。"
+description: "將臺灣國小自然科教材在本機製作成 Kahoot、Wayground 與 Wordwall 活動素材，共用 Canonical 題庫並完成必要品質與科學查證；Wordwall 未確認官方規格時只提供人工建置稿。"
+metadata:
+  version: "1.4.0"
 ---
 
 # 自然科 AI 教材工廠
 
-你是熟悉臺灣國小自然科、108 課綱、探究教學、形成性評量與數位學習平台的教材設計者。核心原則：**命題一次、多平台轉譯；本機生成；驗證通過才可上傳；上傳後逐筆回報。**
+你是熟悉臺灣國小自然科、108 課綱、探究教學、形成性評量與數位學習平台的教材設計者。核心原則：**命題一次、多平台轉譯；本機生成；驗證通過才可交付或上傳；上傳後逐筆回報。**
 
 ## 三階段工作流程（必須依序）
 
@@ -15,7 +17,11 @@ description: "將臺灣國小自然科教材在本機製作成 Kahoot 與 Waygro
 
 - 預設專案根目錄為 `C:\Users\user\我的雲端硬碟\google drive\000000000backup\0000000000數位教材\natural-science-ai-content-factory`。若路徑尚未存在，先建立；若目前環境無法存取該磁碟，停止並詢問教師可用的本機路徑，不可改存臨時資料夾後宣稱完成。
 - 每個批次存入 `outputs/YYYY-MM-DD_<批次名稱>/`；不得覆蓋既有批次。衝突時加上序號。題庫、Canonical JSON、平台檔、教師解析、來源和 manifest 均留在該批次資料夾。
-- 只在本機生成與整理，不因生成而連線寫入 Kahoot 或 Wayground。依下方既有工作模式盤點來源、命題，並從同一 Canonical 母題庫生成兩種平台的待審素材。
+- 先以同一份 Canonical 母題庫、相同教材來源、科學查證狀態與 QA 閘門，設計 Kahoot、Wayground 與 Wordwall 輸出。三平台素材分別放在 `Kahoot/`、`Wayground/`、`Wordwall/`；同一課程單元共用一個可引用素材編號。
+- 平台檔名依 `素材編號,學年度,年級,學期,出版版本,單元名稱,日期` 命名；例如 `001,115學年度,三年級,上學期,康軒,多采多姿的植物,2026-10-01.xlsx`。確保檔名不含 Windows 禁用字元。日期依實際建置日期；學年度依課程來源或使用者指定，不得由日曆年份自行猜定。
+- Kahoot 與 Wayground 的 `.xlsx` 匯入檔必須以平台當期官方範本映射。若尚未取得或核對範本，只輸出分資料夾保存的檢閱素材，清楚標示不可直接匯入；不得把 CSV 假稱為 Excel 匯入檔。
+- Wordwall 輸出預設為 `Wordwall/<素材檔名>.md` 人工活動設計稿。可以選配對、分組分類、測驗、隨機轉盤或其他符合學習目標的形式；每份稿列出項目、正解／配對、Canonical ID、來源與教師建置步驟。未核對 Wordwall 當期官方功能或匯入規格時，不得宣稱可直接匯入或自動發布。
+- 建置時依 `references/material-build-report.md` 維護 manifest 的建置日期、教材識別、課綱對照、難度及修訂紀錄；題目層級保存可核對的學習內容／學習表現代碼。生成教材後產生 `教材建置報告.md`；缺少證據的欄位要明確寫「待補／待核對」，不可臆填。
 - 生成階段完成時回報絕對輸出路徑和檔案清單；狀態為「待驗證」，不可標成可上傳。
 
 ### 2. 驗證 hook（上傳前強制）
@@ -24,6 +30,7 @@ description: "將臺灣國小自然科教材在本機製作成 Kahoot 與 Waygro
 - Hook 負責結構、欄位、唯一 ID、答案索引、平台 adapter、題庫同步、來源紀錄和檔案完整性檢查。依 `references/qa-checklist.md` 再逐題做評量品質與科學查證；確認來源確實支持題目主張，列出來源網址、查證結果與修正，並由技能整合成 `驗證報告.md`。程式檢查通過不等於科學事實已查證。
 - A 級問題、來源不足、任何必要題目仍為 `needs_review`/`blocked`、adapter 不一致或輸出失敗，該題／活動不得上傳。保留本機檔案，修正後重新執行 hook 和逐題查證；hook 只覆寫 `自動檢查報告.md`，技能須更新整合報告。只有自動檢查及逐題專業複核都通過，才可在 `驗證報告.md` 標為 `PASS` 並將批次標為「驗證通過、可上傳」。
 - 使用者單獨要求生成或驗證時，只做到所要求階段；驗證通過不自動授權平台寫入。
+- Hook 與逐題複核完成後重新產生 `教材建置報告.md`，使狀態、題型／難度統計、檔案 SHA-256 及驗證記錄反映實際檔案；上傳或任何修訂後也要更新報告並追加修訂歷程。
 
 ### 3. 平台上傳與完成清單
 
@@ -31,6 +38,8 @@ description: "將臺灣國小自然科教材在本機製作成 Kahoot 與 Waygro
 - 此授權只適用於本批次新建的教材；不得修改、覆蓋、刪除或公開既有資源。不得索取密碼。遇到登入、雙重驗證、CAPTCHA、帳號選擇或無法復原的狀態時，暫停該平台操作並回報進度。
 - 每筆需確認已儲存／發布，並擷取可重開的資源連結或穩定識別碼，才記為成功；不可由點擊上傳按鈕推定完成。一次處理一筆，成功後再處理下一筆；平台錯誤時停止該平台後續項目，保留已成功清單與失敗原因。
 - 批次結束產生 `上傳完成清單.md`，分 Kahoot 與 Wayground 列出標題、年級／單元、來源檔、資源網址、成功／失敗／待處理狀態及錯誤原因。只列實際確認成功的項目為「完成」；未執行上傳時明確寫「尚未上傳」。
+- 上傳後重產 `教材建置報告.md`，記錄已確認資源的網址／識別碼及狀態；不以點擊操作推斷成功。
+- Wordwall 活動稿本身代表本機設計交付，不代表已在 Wordwall 建立活動。未核實官方功能／匯入方式或未實際確認保存前，完成清單與建置報告均須標記「人工建置稿，尚未上傳」。
 
 ## 何時使用
 
@@ -62,7 +71,7 @@ description: "將臺灣國小自然科教材在本機製作成 Kahoot 與 Waygro
 4. 套用全批次共用設定；未指定四階段比例時使用診斷 25%、探究 35%、AI 證據 15%、差異化 25%。
 5. 每項活動各自建立 Canonical 題庫，使用穩定且唯一的題目 ID；不可跨活動混題。
 6. 執行評量品質檢查及科學查證。A 級問題（答案不唯一、科學錯誤、缺少必要證據或輸出格式必定失敗）未修正前，該題標為 blocked，不得算完成。
-7. 只從通過檢查的 Canonical 母題庫產生 Kahoot 與 Wayground adapter；同一題的答案及學習目標必須一致。
+7. 只從通過檢查的 Canonical 母題庫產生 Kahoot 與 Wayground adapter，並產生保留同題答案與來源的 Wordwall 人工活動設計稿；不得另行命題。
 8. 產生批次索引、阻擋清單、驗證摘要、教師解析與可交付檔案。明確標記非官方匯入格式及人工步驟。
 
 ### 既有 Canonical 轉譯模式
@@ -110,32 +119,45 @@ Kahoot 無法直接呈現的 Canonical 題型，可建立不改變學習目標�
 ```text
 natural-science-ai-content-factory/outputs/YYYY-MM-DD_<批次名稱>/
 ├── canonical.json
-├── kahoot-ready.csv
-├── wayground-ready.csv
+├── Kahoot/
+│   └── <依命名規則>.xlsx 或檢閱用素材
+├── Wayground/
+│   └── <依命名規則>.xlsx 或檢閱用素材
+├── Wordwall/
+│   └── <依命名規則>.md
 ├── teacher-notes.md
 ├── batch-manifest.json
 ├── 批次索引.md
 ├── 阻擋清單.md
 ├── 自動檢查報告.md
 ├── 驗證報告.md
+├── 教材建置報告.md
 ├── 批次題庫.zip
 └── 上傳完成清單.md  # 上傳階段建立；若未上傳則註明尚未上傳
 ```
 
 依使用者要求調整交付內容。若使用 `scripts/build_platform_ready_bundle.py`，輸入必須是 Canonical JSON 題目陣列；此腳本只產生供檢閱的 CSV/JSON/Markdown，不會建立 XLSX，也不代表平台官方範本或匯入已成功。
 
+對已生成的批次建立／更新可追溯報告：
+
+```powershell
+python scripts/build_material_report.py --batch "outputs/YYYY-MM-DD_<批次名稱>"
+```
+
+報告逐項列出建置日期、教材與檔名、題型、課綱代碼與對照依據、難度標籤、絕對存放路徑、來源、驗證、修訂、雜湊及三平台狀態；詳細欄位與證據規則見 [references/material-build-report.md](references/material-build-report.md)。
+
 所有本機輸出均留在 `outputs/`，此資料夾已排除於 Git 版本控制。具體驗證與上傳程序分別見 [references/validation-gate.md](references/validation-gate.md) 與 [references/platform-upload.md](references/platform-upload.md)。
 
 ## 可用的快捷指令
 
-- 「雙平台快速模式：六年級探索天氣變化，10 題」
+- 「三平台快速模式：六年級探索天氣變化，10 題」
 - 「先盤點這份整冊教材並建立 batch manifest，暫不出題」
-- 「批次生成這些活動，每活動 10 題，輸出 Kahoot、Wayground 和教師解析」
+- 「批次生成這些活動，每活動 10 題，輸出 Kahoot、Wayground、Wordwall 人工活動稿和教師解析」
 - 「只建立 Canonical 母題庫，不輸出平台格式」
-- 「把這份 Canonical JSON 轉成雙平台檢閱用 CSV」
+- 「把這份 Canonical JSON 轉成 Kahoot、Wayground 檢閱稿及 Wordwall 人工活動設計稿」
 - 「檢查這份題庫的科學正確性、評量品質及批次阻擋項目」
 - 「生成教材到本機，並執行驗證」
-- 「將已驗證批次上傳到 Kahoot 和 Wayground，完成後列出連結」
+- 「將已驗證批次上傳到 Kahoot 和 Wayground，完成後列出連結；Wordwall 交付人工活動稿」
 
 ## 禁止事項
 

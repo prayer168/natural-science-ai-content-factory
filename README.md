@@ -1,13 +1,13 @@
 # Natural Science AI Content Factory
 
-> 自然科 AI 教材工廠版｜Kahoot × Wayground 雙平台批次教材生成系統
+> 自然科 AI 教材工廠版｜Kahoot × Wayground × Wordwall 多平台教材工作流
 
-![Version](https://img.shields.io/badge/version-v1.3.1-blue)
+![Version](https://img.shields.io/badge/version-v1.4.0-blue)
 ![Language](https://img.shields.io/badge/language-繁體中文-green)
 ![Curriculum](https://img.shields.io/badge/curriculum-108課綱-orange)
-![Platforms](https://img.shields.io/badge/platforms-Kahoot%20%2B%20Wayground-purple)
+![Platforms](https://img.shields.io/badge/platforms-Kahoot%20%2B%20Wayground%20%2B%20Wordwall-purple)
 
-**Natural Science AI Content Factory** 是一套為臺灣國小自然科教師設計的 AI 教材批次生產 Skill。完整流程分成三個可分開呼叫的階段：教材先生成到 Google Drive 的專案資料夾；再由程式 hook 和逐題專業查證把關；最後在明確要求下建立 Kahoot 與 Wayground 資源，並列出實際成功清單。
+**Natural Science AI Content Factory** 是一套為臺灣國小自然科教師設計的 AI 教材批次生產 Skill。它以同一份 Canonical 母題庫、來源與科學查證結果，製作 Kahoot、Wayground 及 Wordwall 活動素材；完成程式 hook 與逐題 QA 後才交付或在明確授權下上傳。Wordwall 未核實當期功能與匯入格式時，只提供可供教師人工建置的活動設計稿。
 
 核心理念只有一句話：
 
@@ -23,7 +23,9 @@
 C:\Users\user\我的雲端硬碟\google drive\000000000backup\0000000000數位教材\natural-science-ai-content-factory
 ```
 
-每批放在 `outputs/YYYY-MM-DD_<批次名稱>/`，不覆蓋舊批次。題庫以 Canonical JSON 作唯一來源，同批產生 Kahoot、Wayground 檢閱檔及教師解析。這些教材留在本機，`outputs/` 已加入 `.gitignore`，不會混入技能原始碼的 Git 版本。
+每批放在 `outputs/YYYY-MM-DD_<批次名稱>/`，不覆蓋舊批次。題庫以 Canonical JSON 作唯一來源，同批產生 Kahoot、Wayground 檢閱素材、Wordwall 人工活動稿及教師解析。三平台素材分別存放在 `Kahoot/`、`Wayground/`、`Wordwall/`，並共用單元素材編號。素材檔名格式為 `編號,學年度,年級,學期,版本,單元名稱,日期`；日期採 `YYYY-MM-DD`。這些教材留在本機，`outputs/` 已加入 `.gitignore`，不會混入技能原始碼的 Git 版本。
+
+每批教材另有 `教材建置報告.md`，記錄教材名稱、建置日期、題型、課綱代碼與對照理由、難度、存放位置、來源、驗證、修訂、檔案 SHA-256 與平台發布狀態。缺少依據時保留「待補／待核對」。規格見 [教材建置報告](references/material-build-report.md)。
 
 ### 2. 呼叫驗證 hook
 
@@ -33,13 +35,13 @@ C:\Users\user\我的雲端硬碟\google drive\000000000backup\0000000000數位�
 python scripts/validate_content_bundle.py --bundle "<批次資料夾>"
 ```
 
-Hook 檢查欄位、答案索引、重複題目、雙平台 CSV 與母題庫同步、查證來源欄位及檔案完整性，並產生 `自動檢查報告.md`。技能接著必須開啟來源逐題確認科學主張並審查評量品質，將結果整合到 `驗證報告.md`；兩層都通過才標記 `PASS`。有任何阻擋題目便不得進入上傳階段。
+Hook 檢查欄位、答案索引、重複題目、Kahoot／Wayground 檢閱素材與母題庫同步、查證來源欄位及檔案完整性，並產生 `自動檢查報告.md`。Wordwall 活動稿逐項列出 Canonical ID、項目、答案或配對、來源及教師步驟。技能接著必須開啟來源逐題確認科學主張並審查評量品質，將結果整合到 `驗證報告.md`；兩層都通過才標記 `PASS`。有任何阻擋題目便不得交付為已驗證教材或進入上傳階段。
 
 ### 3. 上傳平台並列出完成清單
 
-使用者明確要求上傳後，才操作已登入的 Kahoot 和 Wayground。先查當期官方說明和平台範本；每筆確認儲存成功且可重新開啟後，才記錄穩定連結。批次資料夾內的 `上傳完成清單.md` 區分成功、失敗與待處理，不會把單純按過上傳按鈕算成完成。詳細程序見 [`references/platform-upload.md`](references/platform-upload.md)。
+Kahoot 與 Wayground 的 `.xlsx` 匯入檔須依平台當期官方範本製作；若只有 CSV 檢閱稿，不可宣稱能直接匯入。使用者明確要求後才操作已登入的平台，逐筆確認儲存成功且能重新開啟，才記錄資源連結。Wordwall 在未核實當期活動功能／匯入規格時，只交付人工建置稿，不宣稱直接匯入或已發布。`上傳完成清單.md` 區分各平台成功、失敗與待處理。詳細程序見 [`references/platform-upload.md`](references/platform-upload.md)。
 
-生成或驗證的指令不會自動授權第三階段；可用同一句明確說「上傳到 Kahoot 和 Wayground」來授權新建本批次資源，不會編輯既有測驗。
+生成或驗證的指令不會自動授權平台寫入。明確要求上傳才會操作 Kahoot 或 Wayground；Wordwall 在官方當期規格未核實前仍以人工活動設計稿交付。
 
 ## 安裝為 Codex Skill
 
@@ -59,14 +61,14 @@ Copy-Item .\scripts $target -Recurse -Force
 
 - 臺灣國小三至六年級自然科教師
 - 使用 108 課綱進行素養導向評量的教師
-- 需要大量建立 Kahoot / Wayground 題庫的教師
+- 需要建立 Kahoot、Wayground 測驗及 Wordwall 活動設計的教師
 - 想把 PDF、PPTX、DOCX、網站、截圖、講義或既有題庫批次轉成互動教材的教師
 - 進行前測、形成性評量、後測、複習、迷思診斷或差異化教學的教師
 - 需要保留教師解析、迷思概念、補救教學與查證紀錄的教學設計者
 
 ## 2. V1.2.0 的主要升級
 
-相較 V1.1 的「Kahoot × Wayground 雙平台題庫引擎」，V1.2.0 進一步加入 **AI 教材工廠模式**。
+相較 V1.1 的「Kahoot × Wayground 雙平台題庫引擎」，V1.2.0 進一步加入 **AI 教材工廠模式**；目前 v1.4.0 再加入 Wordwall 人工活動設計稿與可追溯教材報告。
 
 > 1.2.0 引入的教材工廠能力延續至目前版本：Skill 會先盤點教材並建立 manifest，再逐活動產生 Canonical 題庫、完成 QA 與科學查證，最後才分流平台格式。
 
@@ -108,10 +110,10 @@ Copy-Item .\scripts $target -Recurse -Force
 教材 / 課綱 / 教師資料
           ↓
    Canonical 題庫
-      ↙         ↘
- Kahoot        Wayground
-      ↘         ↙
- 教師解析 / Markdown / CSV / 驗證摘要
+      ↙          ↓           ↘
+ Kahoot      Wayground      Wordwall
+      ↘          ↓           ↙
+ 教師解析 / 平台檢閱稿 / 人工活動設計 / 驗證摘要
 ```
 
 Canonical 題目可保留：
@@ -131,22 +133,25 @@ Canonical 題目可保留：
 - 平台題型映射
 - `fallback_type`
 - `manual_required`
+- 可選 `wordwall_adapter` 活動設計偏好；該欄位不宣稱平台功能已核實
 
 答案索引使用 1 起算；單選題只能有一個正解，多選題列出所有正解。未查證資料使用 `needs_review`，有 A 級阻擋問題的題目使用 `blocked`。
 
-### 2.3 雙平台輸出
+### 2.3 多平台輸出
 
 同一份 Canonical 母題庫可以輸出：
 
-- Kahoot-ready 題庫
-- Wayground-ready 題庫
+- Kahoot 檢閱稿；取得當期官方匯入範本後可依範本另製 `.xlsx`
+- Wayground 檢閱稿；取得當期官方匯入範本後可依範本另製 `.xlsx`
+- Wordwall 人工活動設計稿：配對、分組分類、測驗、隨機轉盤或其他符合目標的活動
 - 教師解析版
 - Markdown 題庫
 - CSV 備份
+- 教材建置報告與修訂履歷
 - 批次索引
 - 批次驗證摘要
 
-Wayground 可優先使用多元互動題型；若 Kahoot 無法等價呈現，則建立安全降級版本，而不是硬轉造成評量意義改變。
+各平台輸出依自身題型特性映射；若無法等價呈現，需提供安全降級或人工建置步驟，而不是硬轉造成評量意義改變。Wordwall 當期功能或匯入規格未核實時，一律標示為人工建置稿。
 
 ## 3. 四階段自然科 AI 評量流程
 
@@ -211,6 +216,7 @@ Wayground 可優先使用多元互動題型；若 Kahoot 無法等價呈現，�
 完成盤點後，每個活動產生 10 題，
 採診斷→探究→AI證據→差異化架構，
 生成到本機後執行驗證；通過後再把這批教材上傳到 Kahoot 和 Wayground，最後列出每筆資源連結。
+Wordwall 請另產生人工活動設計稿；未核實官方功能與匯入規格前，不要宣稱可直接匯入。
 ```
 
 ### 模式 C：既有 Kahoot 升級 Wayground
@@ -246,10 +252,11 @@ Step 08 建立 Canonical 母題庫
 Step 09 執行評量品質 QA
 Step 10 執行科學內容查證
 Step 11 平台題型映射
-Step 12 輸出 Kahoot-ready / Wayground-ready
+Step 12 由同一 Canonical 產生 Kahoot、Wayground 與 Wordwall 設計稿
 Step 13 產生教師解析與補救建議
-Step 14 建立批次索引與驗證摘要
-Step 15 打包交付
+Step 14 驗證 Kahoot、Wayground、Wordwall 內容與 Canonical ID／正解／來源一致
+Step 15 建立批次索引、教材建置報告與驗證摘要
+Step 16 分平台資料夾打包交付
 ```
 
 ## 7. 評量品質原則
@@ -278,6 +285,8 @@ Kahoot 與 Wayground 的匯入格式可能改版，因此本專案採 **Template
 
 因此本專案不把平台欄位永久寫死。
 
+Wordwall 未確認當期官方功能或匯入規格時，不產生直接匯入宣稱；只提供 Wordwall 資料夾中的人工活動稿，內含項目、正解／配對、Canonical ID、來源及教師建置步驟。Wordwall 與其他平台共用同一 Canonical 題庫和 QA 閘門。
+
 ## 9. 專案結構
 
 ```text
@@ -290,18 +299,23 @@ natural-science-ai-content-factory/
 │   └── conversation-history.md
 ├── references/
 │   ├── canonical-schema.md
+│   ├── material-build-report.md
 │   ├── platform-mapping.md
 │   ├── prompt-library.md
 │   └── qa-checklist.md
 ├── examples/
 │   ├── batch-manifest-example.yaml
 │   ├── items-example.json
+│   ├── wordwall-activity-plan-example.md
 │   └── generated-bundle/
 │       ├── canonical.json
-│       ├── kahoot-ready.csv
-│       ├── wayground-ready.csv
+│       ├── Kahoot/
+│       ├── Wayground/
+│       ├── Wordwall/
 │       └── teacher-notes.md
 └── scripts/
+    ├── build_material_report.py
+    ├── build_wordwall_activity_plan.py
     └── build_platform_ready_bundle.py
 ```
 
@@ -310,12 +324,14 @@ natural-science-ai-content-factory/
 需求為 Python 3，腳本只使用標準函式庫。提供一份 Canonical JSON 題目陣列，即可輸出供檢閱及後續範本映射用的 CSV、JSON 與教師解析 Markdown：
 
 ```bash
-python scripts/build_platform_ready_bundle.py --json examples/items-example.json --outdir dist/example-bundle
+python scripts/build_platform_ready_bundle.py --json examples/items-example.json --outdir dist/example-bundle --filename-stem "001,115學年度,六年級,上學期,版本待補,探索天氣變化,2026-10-01"
 ```
 
-The builder runs the automatic validation gate and exits with a nonzero status if the files are inconsistent. A green automatic check still requires the skill's source and assessment review before upload. Validate the checker with `python -m unittest discover -s tests`.
+腳本在 `Kahoot/` 與 `Wayground/` 產生檢閱用 CSV，在 `Wordwall/` 產生追溯 Canonical ID、答案、來源的人工活動設計稿。設定 `--filename-stem` 時，該 stem 應依素材編號、學年度、年級、學期、版本、單元及日期組成。Builder 會執行自動驗證並在輸出不一致時以非零狀態結束；自動檢查通過仍須逐題專業審查。執行 `python -m unittest discover -s tests` 驗證工具。
 
 這些 CSV 並非平台官方範本。若要直接匯入，請先取得 Kahoot 或 Wayground 當期官方範本，再依照該範本映射欄位。腳本輸出的正確答案索引沿用 Canonical 的 1 起算編號。
+
+Wordwall 範例見 [examples/wordwall-activity-plan-example.md](examples/wordwall-activity-plan-example.md)。它示範人工建置稿格式，不代表 Wordwall 官方匯入範本或功能保證。
 
 ## 專案紀錄
 
@@ -325,7 +341,7 @@ The builder runs the automatic validation gate and exits with a nonzero status i
 
 ## 10. 版本
 
-目前版本：**v1.3.1**
+目前版本：**v1.4.0**
 
 版本規則採 [Semantic Versioning](https://semver.org/)：
 
@@ -333,11 +349,11 @@ The builder runs the automatic validation gate and exits with a nonzero status i
 - `MINOR`：新增向下相容功能
 - `PATCH`：錯誤修正、提示詞調整、文件改善
 
-Git 發行版本以 `VERSION`、README 與 `CHANGELOG.md` 的 `1.3.1` 相互對應；變更紀錄見 [CHANGELOG.md](CHANGELOG.md)。此版本的 Tag：
+Git 發行版本以 `VERSION`、README、Skill metadata 與 `CHANGELOG.md` 的 `1.4.0` 相互對應；變更紀錄見 [CHANGELOG.md](CHANGELOG.md)。`v1.3.0` 與 `v1.3.1` 已發布，本版使用新的向下相容 MINOR 版本號。此版本的 Tag：
 
 ```bash
-git tag -a v1.3.1 -m "Natural Science AI Content Factory v1.3.1"
-git push origin v1.3.1
+git tag -a v1.4.0 -m "Natural Science AI Content Factory v1.4.0"
+git push origin v1.4.0
 ```
 
 ## 11. 專案定位
